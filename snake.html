@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>贪吃蛇</title>
+    <meta charset="UTF-8">
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font: 110% Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+        }
+
+        h2,
+        h3,
+        p {
+            color: #333;
+        }
+
+        p {
+            font-size: 18px;
+        }
+
+        #container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .head,
+        .body {
+            width: 20px;
+            height: 20px;
+            background-color: #ac0500;
+            position: absolute;
+            z-index: 100;
+            display: none;
+        }
+
+        .head {
+            background-color: #8b0500;
+            border-radius: 2px;
+        }
+
+        .enemy {
+            width: 16px;
+            height: 16px;
+            background-color: #333333;
+            position: absolute;
+            z-index: 2;
+            display: none;
+        }
+
+        #score {
+            width: 80px;
+            height: 20px;
+            color: #333333;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 2;
+        }
+
+        #move {
+            position: relative;
+            width: 440px;
+            height: 400px;
+            background-color: #EEE;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #game-start:hover {
+            color: red;
+        }
+
+        .anibtn {
+            background-color: #333;
+            width: 50px;
+            height: 50px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid white;
+            color: white;
+        }
+
+        .anibtn:hover {
+            background-color: whitesmoke;
+            color: #333333;
+        }
+
+        #movemenu {
+            width: 100%;
+            background-color: #e7d3d3;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .box {
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            margin-left: 10px;
+        }
+
+        #exitgame {
+            display: none;
+            width: 150px;
+        }
+
+        #game-start {
+            background-color: inherit;
+            border: 2px solid #333;
+            color: #333333;
+            padding: 15px 32px;
+            text-align: center;
+            display: inline-block;
+            font-size: 24px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        .button {
+            background-color: #333;
+            border: 1px solid white;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 20px;
+        }
+
+        .button:hover {
+            background-color: whitesmoke;
+            color: #333333;
+        }
+
+        @media print, screen and (max-width: 640px) {
+            #container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .box {
+                margin-left: 0;
+                margin-top: 10px;
+                width: 100%;
+                justify-content: center;
+            }
+
+            #movemenu {
+                width: 200px;
+                padding: 10px;
+            }
+
+            #move {
+                width: 360px;
+            }
+
+            .anibtn {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div id="container">
+    <div id="move">
+        <button id="game-start">start!</button>
+        <span id="score"></span>
+    </div>
+    <div class="box">
+        <div id="movemenu">
+            <p>
+                <input class="anibtn up" type="button" value="up"/>
+            </p>
+            <p>
+                <input class="anibtn left" type="button" value="left"/>
+                <input class="anibtn stop" type="button" value="stop"/>
+                <input class="anibtn right" type="button" value="right"/>
+            </p>
+            <p>
+                <input class="anibtn down" type="button" value="down"/>
+            </p>
+            <!--        <p>speed:<input onchange="controlSpeed()" type="range" id="speedRange" min="0" max="9"><span id="num"></span></p>-->
+        </div>
+
+        <div id="exitgame">
+            <form>
+                you have played it for
+                <input id="second" style="width: 40px;" type="text"> seconds.
+                <input class="button" id="button-exit-game" type="button" value="exit the game">
+            </form>
+        </div>
+        <div id="time-count"></div>
+    </div>
+
+</div>
+<script type="text/javascript">
+    //8.27重大更新2.0 加入敌人 碰撞得分
+    //8.29 凌晨 2.1 更新score显示 draw函数
+    //8.29 17:20 2.2 加入调速功能 更新移动函数
+    //8.29 23:37 重大更新3.0 实现基本贪吃蛇功能
+    //8.30 10:57 3.1 去除 移动函数 退出游戏bug
+    //8.30 17:45 3.2 加入game over
+    //8.31 17:30 3.2.1 去除 停止时无头 等bug 优化代码
+    //8.31 23:24 3.2.2 优化css over
+    const log = console.log.bind(console);
+    const e = selector => document.querySelector(selector);
+    const es = selector => document.querySelectorAll(selector);
+    const appendHtml = (element, html) => element.insertAdjacentHTML('beforeend', html);
+    var screen = e("#move"); //屏幕
+    var second = 0;
+    var t;
+    var flag;
+    var flag2;
+    var height = screen.offsetHeight; //适应不同屏幕宽度，高度
+    var width = screen.offsetWidth;
+    var fps = 4;
+    var score = 0;
+    var direction = "";
+    var size = 20;
+
+    //生成蛇头 敌人
+    function draw(div) {
+        let container = e('#move');
+        let t = `<div class="${div}"></div>`;
+        appendHtml(container, t);
+        let a = e("." + div);
+        let left = Math.round(Math.random() * (width / size - 1)) * 20;
+        let up = Math.round(Math.random() * (height / size - 1)) * 20;
+        a.style.left = left + "px";
+        a.style.top = up + "px";
+        a.style.display = "block";
+    }
+
+    const insertSnake = function () {
+        let container = e('#move');
+        let t = `<div id="snake"></div>`;
+        appendHtml(container, t);
+    };
+
+    const drawBody = function (left, up) {
+        let container = e('#snake');
+        let t = `<div class="head"></div>`;
+        appendHtml(container, t);
+        let a = e(".head");
+        a.style.left = left + "px";
+        a.style.top = up + "px";
+        a.style.display = "block";
+    };
+
+    //开始游戏，跳出退出游戏按钮，计时界面
+    const timedCount = () => {
+        e('#second').value = second;
+        second = second + 1;
+        t = setTimeout("timedCount()", 1000);
+        e("#game-start").style.visibility = "hidden";
+    };
+
+    const startGame = () => {
+        let button = e('#game-start');
+        button.addEventListener('click', function () {
+            e("#time-count").style.display = "none";//防止try again出现
+            e("#exitgame").style.display = "block";
+            randomDirection();
+            timedCount();
+            insertSnake();
+            draw("head");
+            draw("enemy");
+            e('#score').innerHTML = "Score: " + score;
+            eatFood();
+            move();
+        })
+    };
+
+    //移动
+    //插入一个头节点，删除一个尾节点就可以了，新插入的头节点位置根据蛇当前的方向决定
+    const randomDirection = () => {
+        let i = Math.round(Math.random() * 3);
+        if (i === 0) {
+            direction = 'left'
+        } else if (i === 1) {
+            direction = 'right'
+        } else if (i === 2) {
+            direction = 'up'
+        } else if (i === 3) {
+            direction = 'down'
+        }
+    };
+
+    const bindEventMove = () => {
+        let container = e('#movemenu');
+        container.addEventListener('click', (event) => {
+            let self = event.target;
+            if (self.classList.contains('left')) {
+                direction = 'left'
+            } else if (self.classList.contains('right')) {
+                direction = 'right'
+            } else if (self.classList.contains('up')) {
+                direction = 'up'
+            } else if (self.classList.contains('down')) {
+                direction = 'down'
+            } else if (self.classList.contains('stop')) {
+                direction = 'stop'
+
+            }
+        })
+    };
+
+    const move = () => {
+        bindEventMove();
+        let left = parseInt(e(".head").style.left);
+        let up = parseInt(e(".head").style.top);
+        flag = setInterval(function () {
+            let activeElement = e('.head');
+            if (activeElement !== null) {
+                activeElement.classList.add('body');
+                activeElement.classList.remove('head')
+            }
+            if (direction === 'left') {
+                if (left <= 0) {
+                    left = width - size;
+                } else {
+                    left = left - size;
+                }
+                drawBody(left, up);
+                e('.body').remove();
+            } else if (direction === 'right') {
+                if (left >= width - size) {
+                    left = 0;
+                } else {
+                    left = left + size;
+                }
+                drawBody(left, up);
+                e('.body').remove();
+
+            } else if (direction === 'up') {
+                if (up <= 0) {
+                    up = height - size;
+                } else {
+                    up = up - size;
+                }
+                drawBody(left, up);
+                e('.body').remove();
+            } else if (direction === 'down') {
+                if (up >= height - size) {
+                    up = 0;
+                } else {
+                    up = up + size;
+                }
+                drawBody(left, up);
+                e('.body').remove();
+            } else if (direction === 'stop') {
+                let body = es('.body');
+                let len = body.length;
+                body[len - 1].classList.add('head');
+                body[len - 1].classList.remove('body');
+            }
+        }, 1000 / fps)
+    };
+
+    //判断相撞
+    function check(obj1, obj2) {
+        //以obj1作为固定的参照物，使用时注意div是否有top与left，如果没有设置的话会是空值
+        //obj2在obj1的上面 obj2.top+obj2.height<obj1.top
+        //obj2在obj1的下面 obj2.top>obj1.top+obj1.height
+        //obj2在obj1的左面 obj2.left+obj2.width<obj1.left
+        //obj2在obj1的右面 obj2.left>obj1.left+obj1.width
+        //var obj1top = parseInt($(obj1).css("top"));
+        if (obj1 && obj2) {
+            let obj1top = parseInt(obj1.style.top);
+            let obj1left = parseInt(obj1.style.left);
+            let obj1width = Number(obj1.offsetWidth);
+            let obj1height = Number(obj1.offsetHeight);
+            let obj2top = parseInt(obj2.style.top);
+            let obj2left = parseInt(obj2.style.left);
+            let obj2width = Number(obj2.offsetWidth);
+            let obj2height = Number(obj2.offsetHeight);
+            return !((obj2top + obj2height < obj1top) || (obj2top > obj1top + obj1height) || (obj2left + obj2width < obj1left) || (obj2left > obj1left + obj1width));
+
+        }
+    }
+
+    const eatFood = function () {
+        flag2 = setInterval(function () {
+            let head = e('.head');
+            let enemy = e('.enemy');
+            if (check(head, enemy)) {
+                score++;
+                e('#score').innerHTML = "Score: " + score;
+                e('.enemy').remove();
+                draw("enemy");
+                let activeElement = e('.head');
+                let left = parseInt(e(".head").style.left);
+                let up = parseInt(e(".head").style.top);
+                if (activeElement !== null) {
+                    activeElement.classList.add('body');
+                    activeElement.classList.remove('head')
+                }
+
+                if (direction === 'left') {
+                    if (left <= 0) {
+                        left = width - size;
+                    } else {
+                        left = left - size;
+                    }
+                } else if (direction === 'right') {
+                    if (left >= width - size) {
+                        left = 0;
+                    } else {
+                        left = left + size;
+                    }
+                } else if (direction === 'up') {
+                    if (up <= 0) {
+                        up = height - size;
+                    } else {
+                        up = up - size;
+                    }
+                } else if (direction === 'down') {
+                    if (up >= height - size) {
+                        up = 0;
+                    } else {
+                        up = up + size;
+                    }
+                }
+                drawBody(left, up);
+
+            }
+            gameOver()
+        }, 1000 / fps)
+
+    };
+
+    //碰到自己游戏结束
+    const gameOver = () => {
+        let bodys = es('.body');
+        let head = e('.head');
+        for (let i = 0; i < bodys.length - 1; i++) {
+            // 得分瞬间head会同时拥有body class
+            let body = bodys[i];
+            if (head !== null) {
+                if ((head.style.left === body.style.left) && (head.style.top === body.style.top)) {
+                    alert("Game Over! \nYour score is " + score);
+                    exitGame();
+                    break
+                }
+            }
+        }
+    };
+
+    //游戏速度控制
+    // const controlSpeed = () => {
+    //     let x = e("#speedRange").value;
+    //     let num = e("#num");
+    //     num.innerHTML = x;
+    //     speed = Number(x);
+    // };
+
+    //停止游戏，显示最终计时，回到起始界面
+    const exitGame = function () {
+        clearInterval(flag);
+        clearInterval(flag2);
+        e('.enemy').remove();
+        e('#snake').remove();
+        e("#time-count").style.display = "block";
+        e("#time-count").innerHTML = 'You have played it for ' + second.toString() + ' seconds.';
+        e("#game-start").innerHTML = "Try again!";
+        second = 0;
+        setTimeout("document.getElementById('second').value=0", 0);
+        clearTimeout(t);
+        e("#exitgame").style.display = "none";
+        e("#game-start").style.visibility = "visible";
+        score = 0
+    };
+
+    const __main = function () {
+        startGame();
+        let button = e('#button-exit-game');
+        button.addEventListener('click', function () {
+            exitGame()
+        })
+    };
+
+    __main()
+
+</script>
+</body>
+
+</html>

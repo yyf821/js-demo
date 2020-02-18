@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>draw</title>
+    <style>
+        #myCanvas{
+            border:1px solid #d3d3d3;
+            cursor: crosshair;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="800" height="450">
+        Your browser does not support the HTML5 canvas tag.
+    </canvas>
+    <div>
+        颜色<input type="color" id="color" value="#000000">
+        粗细<input type="range" id="size" min="1" max="100" value="1">
+        <button id="reset">清除</button>
+    </div>
+    <script>
+        const log = console.log.bind(console)
+        const e = selector => document.querySelector(selector)
+        let ctx = e("#myCanvas").getContext("2d")
+        const draw = function () {
+            let moving = false
+            let pro = e("#myCanvas")
+            let beginX
+            let beginY
+            pro.addEventListener("mousedown", function(event) {
+                moving = true
+                beginX =event.offsetX
+                beginY =event.offsetY
+                ctx.beginPath()
+                ctx.moveTo(beginX,beginY)
+            })
+            pro.addEventListener("mousemove", function(event) {
+                if(moving){
+                    let x =event.offsetX
+                    let y =event.offsetY
+                    ctx.lineTo(x,y)
+                    ctx.stroke()
+                    ctx.beginPath()
+                    ctx.moveTo(x,y)
+                }
+            })
+            window.addEventListener("mouseup", function(event) {
+                moving = false
+            })
+        }
+        const changeColor = function(){
+            let color= e("#color")
+            color.addEventListener("change", function(event) {
+                ctx.strokeStyle = color.value
+            })
+        }
+
+        const changeSize = function(){
+            let size= e("#size")
+            size.addEventListener("change", function(event) {
+                ctx.lineWidth = size.value;
+            })
+        }
+        const clear = function(){
+            let canvas = e("#myCanvas")
+            let button= e("#reset")
+            button.onclick = function () {
+                ctx.clearRect(0, 0, canvas.width, canvas.height)
+            }
+        }
+        const __main = function () {
+            ctx.lineCap="round"
+            changeColor()
+            changeSize()
+            draw()
+            clear()
+        }
+        __main()
+
+
+    </script>
+
+</body>
+</html>
