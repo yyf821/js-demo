@@ -384,7 +384,7 @@
             let obj2left = parseInt(obj2.style.left);
             let obj2width = Number(obj2.offsetWidth);
             let obj2height = Number(obj2.offsetHeight);
-            return !((obj2top + obj2height < obj1top) || (obj2top > obj1top + obj1height) || (obj2left + obj2width < obj1left) || (obj2left > obj1left + obj1width));
+            return !((obj2top + obj2height <= obj1top) || (obj2top >= obj1top + obj1height) || (obj2left + obj2width <= obj1left) || (obj2left >= obj1left + obj1width));
 
         }
     }
