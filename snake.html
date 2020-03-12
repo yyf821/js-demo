@@ -223,18 +223,16 @@
         const e = selector => document.querySelector(selector);
         const es = selector => document.querySelectorAll(selector);
         const appendHtml = (element, html) => element.insertAdjacentHTML('beforeend', html);
-        var screen = e("#move"); //屏幕
         var second = 0;
         var t;
         var flag;
         var flag2;
-        var height = screen.offsetHeight; //适应不同屏幕宽度，高度
-        var width = screen.offsetWidth;
+        var height = e("#move").offsetHeight; //适应不同屏幕宽度，高度
+        var width = e("#move").offsetWidth;
         var fps = 4;
         var score = 0;
         var direction = "";
         var size = 20;
-
         //生成蛇头 敌人
         function draw(div) {
             let container = e('#move');
@@ -243,8 +241,8 @@
             let a = e("." + div);
             let left = Math.round(Math.random() * (width / size - 1)) * 20;
             let up = Math.round(Math.random() * (height / size - 1)) * 20;
-            a.style.left = left + "px";
-            a.style.top = up + "px";
+            a.style.left = left + 'px';
+            a.style.top = up + 'px';
             a.style.display = "block";
         }
 
@@ -381,7 +379,7 @@
             //obj2在obj1的下面 obj2.top>obj1.top+obj1.height
             //obj2在obj1的左面 obj2.left+obj2.width<obj1.left
             //obj2在obj1的右面 obj2.left>obj1.left+obj1.width
-            //var obj1top = parseInt($(obj1).css("top"));
+            //const obj1top = parseInt($(obj1).css("top"));
             if (obj1 && obj2) {
                 let obj1top = parseInt(obj1.style.top);
                 let obj1left = parseInt(obj1.style.left);
@@ -408,6 +406,7 @@
                     let activeElement = e('.head');
                     let left = parseInt(e(".head").style.left);
                     let up = parseInt(e(".head").style.top);
+
                     if (activeElement !== null) {
                         activeElement.classList.add('body');
                         activeElement.classList.remove('head')
@@ -441,7 +440,8 @@
                     drawBody(left, up);
 
                 }
-                gameOver()
+
+                //gameOver()
             }, 1000 / fps)
 
         };
@@ -495,10 +495,8 @@
                 exitGame()
             })
             window.addEventListener("resize", function () {
-                
-                height = screen.offsetHeight;
-                width = screen.offsetWidth;
-                log(height,width)
+                height = e("#move").offsetHeight;
+                width = e("#move").offsetWidth;
             })
         };
 
