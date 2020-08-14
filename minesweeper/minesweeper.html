@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扫雷</title>
+    <style>
+        :root {
+            --grey: #ddd;
+            --light-grey: #e2e2e2;
+            --dark-grey: #bbb;
+            --black: #333;
+            --red: #ec433c;
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 16px;
+            
+        }
+
+        h1 {
+            margin: 0 0 32px;
+        }
+
+        p {
+            margin: 0 0 12px;
+        }
+
+        .wrap {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .wrap table {
+            margin: 0 auto 1em;
+            border-collapse: collapse;
+        }
+
+        .wrap table td {
+            width: 30px;
+            height: 30px;
+            text-transform: uppercase;
+            color: #232c88;
+            cursor: pointer;
+        }
+
+        .wrap table td .cell {
+            height: 100%;
+            width: 100%;
+            line-height: 30px;
+            border-width: 2px;
+            border-style: solid;
+            border-color: var(--light-grey) var(--dark-grey) var(--dark-grey) var(--light-grey);
+            -webkit-transition: color .2s ease-in-out, background .2s ease-in-out, border .2s ease-in-out;
+            transition: color .2s ease-in-out, background .2s ease-in-out, border .2s ease-in-out;
+            text-align: center;
+            background: #ddd;
+        }
+
+        .wrap table td .opened {
+            background: #fff;
+            color: #1e2574;
+            border: 1px solid var(--dark-grey);
+        }
+
+        .wrap table td .red {
+            background: var(--red);
+        }
+
+        .wrap table td .flag::before {
+            content: "🚩";
+            color: var(--red);
+            font-size: small;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <h1>扫雷游戏</h1>
+        <p>
+            <label for="pet-select">难度:</label>
+            <select name="level" id="level-select">
+                <option value="beginner">初级</option>
+                <option value="intermediate">中级</option>
+                <option value="expert">专家</option>
+            </select>
+        </p>
+        <p><button id="reset">Reset</button></p>
+        <table id="id-div-mime">
+
+        </table>
+    </div>
+
+    <script src="minesweeper.js"></script>
+</body>
+
+</html>
