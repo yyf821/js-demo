@@ -372,14 +372,13 @@
             }, 1000 / fps)
         };
 
-        //判断相撞
+        //判断是否吃到食物
         function check(obj1, obj2) {
             //以obj1作为固定的参照物，使用时注意div是否有top与left，如果没有设置的话会是空值
             //obj2在obj1的上面 obj2.top+obj2.height<obj1.top
             //obj2在obj1的下面 obj2.top>obj1.top+obj1.height
             //obj2在obj1的左面 obj2.left+obj2.width<obj1.left
             //obj2在obj1的右面 obj2.left>obj1.left+obj1.width
-            //const obj1top = parseInt($(obj1).css("top"));
             if (obj1 && obj2) {
                 let obj1top = parseInt(obj1.style.top);
                 let obj1left = parseInt(obj1.style.left);
@@ -441,7 +440,7 @@
 
                 }
 
-                //gameOver()
+                gameOver()
             }, 1000 / fps)
 
         };
