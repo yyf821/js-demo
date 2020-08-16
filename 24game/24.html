@@ -6,27 +6,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
         img {
-            width: 100px;
+            width: 100%;
+        }
+
+        .wrapper{
+            margin: 0 auto;
+            margin-top: 40px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .cards {
+            display: grid;
+            width: 100%;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            grid-column-gap: 10px;
+            grid-row-gap: 10px;
+        }
+
+        div{
+            margin-bottom: 10px;
+            line-height: 150%;
         }
     </style>
 </head>
 
 <body>
-    <h1>24点</h1>
-    <div class="cards">
-        <!-- 扑克牌素材http://acbl.mybigcommerce.com/52-playing-cards/ -->
-        <img class="card-img" src="../cards/gray_back.png" alt="">
-        <img class="card-img" src="../cards/gray_back.png" alt="">
-        <img class="card-img" src="../cards/gray_back.png" alt="">
-        <img class="card-img" src="../cards/gray_back.png" alt="">
-    </div>
-    <div>
-        <button id="show-answer">看答案</button>
-        <button id="card-reset">新游戏</button>
-    </div>
-    <div class="answer">
-        
+    <div class="wrapper">
+        <h1>24点</h1>
+        <div class="cards">
+            <!-- 扑克牌素材http://acbl.mybigcommerce.com/52-playing-cards/ -->
+            <img class="card-img" src="../cards/gray_back.png" alt="">
+            <img class="card-img" src="../cards/gray_back.png" alt="">
+            <img class="card-img" src="../cards/gray_back.png" alt="">
+            <img class="card-img" src="../cards/gray_back.png" alt="">
+        </div>
+        <div>
+            <button id="show-answer">看答案</button>
+            <button id="card-reset">新游戏</button>
+        </div>
+        <div class="answer">
+
+        </div>
     </div>
     <script src="24.js"></script>
 </body>
