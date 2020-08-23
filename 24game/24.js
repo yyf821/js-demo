@@ -92,7 +92,7 @@ const judgePoint24 = function (nums) {
     }
     dfs(nums);
     //结果去重
-    // str = str.map(s => delExcessBrackets(s));
+    str = str.map(s => delExcessBrackets(s));
     str = Array.from(new Set(str))
     str = filter(str, nums)
     return str
@@ -321,7 +321,6 @@ const __main = () => {
     bindEventAnswer()
     isNoSolution()
     bindEventCal()
-    console.log(judgePoint24([10,9,10,13]));
 }
 
 __main()
