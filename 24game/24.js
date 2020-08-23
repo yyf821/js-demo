@@ -28,6 +28,7 @@ const initCards = function () {
     }
     return cards
 }
+
 const renderCards = function (cards) {
     let html = ''
     for (let i = 0; i < cards.length; i++) {
@@ -37,12 +38,25 @@ const renderCards = function (cards) {
     let container = e('.cards')
     container.innerHTML = html
 }
-const bindEventReset = function (cards) {
+
+const bindEventNew = function (cards) {
     let option = e('#card-reset')
     option.addEventListener('click', function () {
         e('.answer').innerHTML = ''
         let arr = shuffle(cards)
         renderCards(arr)
+        renderNumber()
+    })
+}
+
+const bindEventReset = function () {
+    let option = e('#game-reset')
+    let ops = es('.ops')
+    option.addEventListener('click', function () {
+        renderNumber()
+        ops.forEach(function (item) {
+            item.disabled = false
+        });
     })
 }
 
@@ -96,7 +110,7 @@ const cardToNum = (arr) => {
     return result
 }
 
-const showAnswer = () => {
+const cardArray = () => {
     let divs = es('.card-img')
     let arr = []
     for (i = 0; i < divs.length; i++) {
@@ -104,16 +118,108 @@ const showAnswer = () => {
         arr.push(num)
     }
     arr = cardToNum(arr)
+    return arr
+}
+
+const showAnswer = () => {
+    let arr = cardArray()
     let result = judgePoint24(arr)
     let div = e('.answer')
     div.innerHTML = result.length === 0 ? '无解' : result.join('<br>')
 }
+
+const renderNumber = () => {
+    let arr = cardArray()
+    let html = ''
+    for (let i = 0; i < arr.length; i++) {
+        const element = arr[i];
+        html += `<button class="btn-num">${element}</button> `
+    }
+    let container = e('.numbers')
+    container.innerHTML = html
+
+}
+
 const bindEventAnswer = function () {
     let button = e('#show-answer')
     button.addEventListener('click', function () {
         showAnswer()
     })
 }
+
+const bindEventCal = function () {
+    let container = e('.numbers')
+    let container2 = e('.ops')
+    let ops = es('.op')
+    let nums = es('.btn-num')
+    container.addEventListener('click', function (event) {
+        let self = event.target
+        if (e('.active')) {
+            let n1 = container.dataset.n1
+            let op = container.dataset.op
+            let n2 = self.textContent
+            let result = eval(`${n1}${op}${n2}`)
+            e('.active').remove()
+            self.remove()
+            let button = `<button class="btn-num">${result}</button>`
+            container.insertAdjacentHTML('beforeend', button);
+            ops.forEach(function (item) {
+                item.disabled = true
+            });
+            nums = es('.btn-num')
+            nums.forEach(function (item) {
+                item.disabled = false
+            });
+            checkWin()
+        } else {
+            self.classList.add('active')
+            container.setAttribute("data-n1", self.textContent);
+            ops.forEach(function (item) {
+                item.disabled = false
+            });
+            nums.forEach(function (item) {
+                item.disabled = true
+            });
+        }
+
+    })
+    container2.addEventListener('click', function (event) {
+        let self = event.target
+        container.setAttribute("data-op", self.textContent);
+        ops.forEach(function (item) {
+            item.disabled = true
+        });
+        nums.forEach(function (item) {
+            item.disabled = false
+        });
+        if (e('.active')) {
+            e('.active').disabled = true
+        }
+    })
+}
+
+const checkWin = function () {
+    let nums = es('.btn-num')
+    if(nums.length === 1 ){
+        if (Number(nums[0].textContent) === 24) {
+            alert('计算成功')
+        } else {
+            alert('计算失败')
+        }
+    }
+}
+
+const isNoSolution = function () {
+    let button = e('#no-solution')
+    button.addEventListener('click', function () {
+        let arr = cardArray()
+        let result = judgePoint24(arr)
+        result.length === 0 ? alert('恭喜你，答对了！') : alert('很遗憾，答错了')
+        let div = e('.answer')
+        div.innerHTML = result.length === 0 ? '无解' : result.join('<br>')
+    })
+}
+
 //全加，全乘算一种结果
 const filter = function (list, nums) {
     let opList = ['+', '*']
@@ -137,7 +243,7 @@ const filter = function (list, nums) {
 }
 
 
-
+//TODO:fix(10,9,10,13)
 //检测括号是否可以删除
 const check = function (s, left, right) {
     let i;            //下标
@@ -222,8 +328,13 @@ const __main = () => {
     let cards = initCards()
     let arr = shuffle(cards)
     renderCards(arr)
-    bindEventReset(cards)
+    renderNumber()
+    bindEventNew(cards)
+    bindEventReset()
     bindEventAnswer()
+    isNoSolution()
+    bindEventCal()
+
 }
 
 __main()

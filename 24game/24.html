@@ -15,10 +15,10 @@
             width: 100%;
         }
 
-        .wrapper{
+        .wrapper {
             margin: 0 auto;
             margin-top: 40px;
-            width: 300px;
+            width: 280px;
             text-align: center;
         }
 
@@ -31,10 +31,11 @@
             grid-row-gap: 10px;
         }
 
-        div{
+        div {
             margin-bottom: 10px;
             line-height: 150%;
         }
+
     </style>
 </head>
 
@@ -48,7 +49,18 @@
             <img class="card-img" src="../cards/gray_back.png" alt="">
             <img class="card-img" src="../cards/gray_back.png" alt="">
         </div>
+        <div class="numbers">
+
+        </div>
+        <div class="ops">
+            <button class="op" disabled>+</button>
+            <button class="op" disabled>-</button>
+            <button class="op" disabled>*</button>
+            <button class="op" disabled>/</button>
+        </div>
         <div>
+            <button id="game-reset">重置</button>
+            <button id="no-solution">无解</button>
             <button id="show-answer">看答案</button>
             <button id="card-reset">新游戏</button>
         </div>
