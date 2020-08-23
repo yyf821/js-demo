@@ -92,7 +92,7 @@ const judgePoint24 = function (nums) {
     }
     dfs(nums);
     //结果去重
-    str = str.map(s => delExcessBrackets(s));
+    // str = str.map(s => delExcessBrackets(s));
     str = Array.from(new Set(str))
     str = filter(str, nums)
     return str
@@ -200,7 +200,7 @@ const bindEventCal = function () {
 
 const checkWin = function () {
     let nums = es('.btn-num')
-    if(nums.length === 1 ){
+    if (nums.length === 1) {
         if (Number(nums[0].textContent) === 24) {
             alert('计算成功')
         } else {
@@ -243,7 +243,6 @@ const filter = function (list, nums) {
 }
 
 
-//TODO:fix(10,9,10,13)
 //检测括号是否可以删除
 const check = function (s, left, right) {
     let i;            //下标
@@ -293,7 +292,7 @@ const delExcessBrackets = function (s) {
     let right = 0;
     let left = 0;
     let stack = []
-    let del = []
+    s = s.split("")
     for (let i = 0; i < s.length; i++) {
         // 遍历，碰到(直接下标入栈，碰到)出栈
         if (s[i] === '(') {
@@ -303,25 +302,13 @@ const delExcessBrackets = function (s) {
             right = i
             //若检测结果为可以删除，那么标记括号位置删除
             if (check(s, left, right)) {
-                del.push(left)
-                del.push(right)
+                s.splice(left, 1, '');
+                s.splice(right, 1, '');
             }
         }
     }
-
-    if (del) {
-        del = del.sort(function (a, b) {
-            return a - b;
-        });
-        s = s.split('')
-        for (let i = 0; i < del.length; i++) {
-            const n = del[i];
-            s.splice(n - i, 1)
-        }
-        s = s.join('')
-    }
+    s = s.join("");
     return s
-
 }
 
 const __main = () => {
@@ -334,7 +321,7 @@ const __main = () => {
     bindEventAnswer()
     isNoSolution()
     bindEventCal()
-
+    console.log(judgePoint24([10,9,10,13]));
 }
 
 __main()
