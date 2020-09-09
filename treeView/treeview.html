@@ -16,6 +16,10 @@
             padding: 0;
         }
 
+        #tree-view ul {
+            transition: transform 0.26s ease, opacity 0.26s ease;
+        }
+
         .caret {
             cursor: pointer;
             user-select: none;
@@ -34,11 +38,16 @@
         }
 
         .nested {
-            display: none;
+            height: 0;
+            transform: scaleY(0);
+            transform-origin: top;
+            opacity: 0;
         }
 
         .active {
-            display: block;
+            height: auto;
+            transform: scaleY(1);
+            opacity: 1;
         }
     </style>
 </head>
