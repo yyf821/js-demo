@@ -6,19 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        *{
+        * {
             box-sizing: border-box;
         }
+
         button {
             background-color: #008CBA;
             position: relative;
             border: none;
-            color: white;
+            color: white; 
             height: 35px;
             line-height: 35px;
             width: 66px;
-            text-align: center;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             font-size: 16px;
             cursor: pointer;
         }
@@ -30,6 +32,7 @@
 
         .loading {
             display: inline-block;
+            margin-right: 0.5em;
             width: 10px;
             height: 10px;
             border-top: 1px solid white;
@@ -49,7 +52,7 @@
 <body>
     <h1>倒计时按钮</h1>
     <button>
-        <span class="btn-loading"></span>
+        <span class="btn-icon"></span>
         <span class="btn-text">点击</span>
     </button>
     <script>
@@ -58,7 +61,7 @@
         const bindEventClick = function (timer) {
             const btn = e("button");
             const text = e(".btn-text");
-            const loading = e(".btn-loading");
+            const loading = e(".btn-icon");
             btn.addEventListener("click", function () {
                 btn.disabled = true;
                 let num = timer
