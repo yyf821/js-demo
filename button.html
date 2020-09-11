@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>倒计时按钮</h1>
+    <button>点击</button>
+    <script>
+        const e = selector => document.querySelector(selector)
+
+        const bindEventClick = function (timer) {
+            const btn = e("button");
+            btn.addEventListener("click", function () {
+                btn.disabled = true;
+                let num = timer
+                let intervalID = setInterval(function () {
+                    num -= 1
+                    btn.textContent = num + 's'
+                }, 1000);
+                setTimeout(function () {
+                    clearInterval(intervalID);
+                    btn.textContent = "点击"
+                    btn.disabled = false;
+                }, timer * 1000);
+            });
+        }
+
+        const __main = () => {
+            const timer = 5
+            bindEventClick(timer)
+        }
+
+        __main()
+    </script>
+</body>
+
+</html>
