@@ -5,27 +5,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #008CBA;
+            position: relative;
+            border: none;
+            color: white;
+            height: 35px;
+            line-height: 35px;
+            width: 66px;
+            text-align: center;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-top: 1px solid white;
+            border-left: 1px solid white;
+            border-radius: 50%;
+            animation: spin 3s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
 
 <body>
     <h1>倒计时按钮</h1>
-    <button>点击</button>
+    <button>
+        <span class="btn-loading"></span>
+        <span class="btn-text">点击</span>
+    </button>
     <script>
         const e = selector => document.querySelector(selector)
 
         const bindEventClick = function (timer) {
             const btn = e("button");
+            const text = e(".btn-text");
+            const loading = e(".btn-loading");
             btn.addEventListener("click", function () {
                 btn.disabled = true;
                 let num = timer
+                text.textContent = `${num}s`
+                loading.classList.add("loading");
                 let intervalID = setInterval(function () {
                     num -= 1
-                    btn.textContent = num + 's'
+                    text.textContent = `${num}s`
                 }, 1000);
                 setTimeout(function () {
                     clearInterval(intervalID);
-                    btn.textContent = "点击"
                     btn.disabled = false;
+                    text.textContent = '点击'
+                    loading.classList.remove("loading");
                 }, timer * 1000);
             });
         }
