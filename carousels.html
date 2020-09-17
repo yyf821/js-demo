@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 400px;
+            height: 300px;
+            overflow: hidden;
+            border: 1px solid skyblue;
+            position: relative;
+        }
+
+        .img-list {
+            display: flex;
+            list-style-type: none;
+            position: absolute;
+            left: 0px;
+            transition: left 0.2s;
+        }
+
+        .img-list li {
+            width: 400px;
+            height: 300px;
+            border: 1px solid black;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .img-box {
+            width: 100%;
+            height: 100%;
+            font-size: 72px;
+        }
+
+        .msg{
+            background-color: #333;
+            color: white;
+            opacity: 0.4;
+            position: absolute;
+            bottom: 0;
+            padding: 1em;
+            width: 100%;
+        }
+
+        .btn {
+            position: absolute;
+            width: 20px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            background-color: #333;
+            color: white;
+            opacity: 0.4;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 999;
+            transition: opacity 0.2s;
+            user-select: none;
+        }
+
+        .btn:hover {
+            opacity: 1;
+        }
+
+        .prev {
+            left: 0;
+        }
+
+        .next {
+            right: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <ul class="img-list" data-cur="0">
+            <li>
+                <div class="img-box">
+                    1
+                </div>
+                <div class="msg">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deleniti hic perferendis illum nesciunt sapiente atque nulla, officiis officia.</div>
+            </li>
+            <li>
+                <div class="img-box">
+                    2
+                </div>
+                <div class="msg">2222222</div>
+            </li>
+            <li>
+                <div class="img-box">
+                    3
+                </div>
+                <div class="msg">333333333</div>
+            </li>
+            <li>
+                <div class="img-box">
+                    4
+                </div>
+                <div class="msg">4444444444</div>
+            </li>
+            <li>
+                <div class="img-box">
+                    5
+                </div>
+                <div class="msg">55555555555555</div>
+            </li>
+        </ul>
+        <div class="prev btn" data-direction="prev">&lt;</div>
+        <div class="next btn" data-direction="next">&gt;</div>
+    </div>
+    <script>
+        const e = selector => document.querySelector(selector)
+        const es = selector => document.querySelectorAll(selector)
+        const nextImg = function (list, len, direction) {
+            let cur = Number(list.dataset.cur)
+            if (direction === 'prev') {
+                cur = (cur - 1 + len) % len
+            }
+            if (direction === 'next') {
+                cur = (cur + 1) % len
+            }
+            return cur
+        }
+
+        const autoMove = function (list, len) {
+            let timer = setInterval(function () {
+                let index = nextImg(list, len, 'next')
+                list.setAttribute('data-cur', index);
+                list.style.left = `${index * (-400)}px`
+            }, 2000)
+            return timer
+        }
+
+        const onMouseOver = function (list, len, timer) {
+            list.addEventListener('mouseenter', function () {
+                clearInterval(timer)
+            })
+            list.addEventListener('mouseleave', function () {
+                timer = autoMove(list, len)
+            })
+        }
+
+        const bindEventClick = function (list, len) {
+            let buttons = es('.btn')
+            buttons.forEach((btn) => {
+                btn.addEventListener('click', function (event) {
+                    let self = event.target
+                    let direction = self.dataset.direction
+                    let index = nextImg(list, len, direction)
+                    list.setAttribute('data-cur', index);
+                    list.style.left = `${index * (-400)}px`
+                })
+            });
+        }
+
+        const __main = () => {
+            let list = e('.img-list')
+            let len = 5
+            let timer = autoMove(list, len)
+            onMouseOver(list, len, timer)
+            bindEventClick(list, len)
+        }
+
+        __main()
+    </script>
+</body>
+
+</html>
