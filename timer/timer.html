@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        h1{
+            font-weight: 400;
+        }
+
+        body{
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .container {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .group {
+            display: flex;
+        }
+
+        .pic-item,
+        .pic-back,
+        .pic-front,
+        .day {
+            width: 20px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background-color: #333;
+            color: white;
+        }
+
+        .day {
+            width: auto;
+            padding: 0 6px;
+        }
+
+        .pic-item {
+            overflow: hidden;
+            margin: 0 2px;
+        }
+
+        .pic-ani {
+            animation: 1s linear infinite move_eye;
+        }
+
+        @keyframes move_eye {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-100%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>离国庆还有</h1>
+    <div class="container">
+
+        <div class="day">00</div>
+
+        天
+        <div class="group">
+            <div class="pic-item">
+                <div class="pic-front h1-1">0</div>
+                <div class="pic-back h1-2">0</div>
+            </div>
+            <div class="pic-item">
+                <div class="pic-front h2-1">0</div>
+                <div class="pic-back h2-2">0</div>
+            </div>
+        </div>
+        时
+        <div class="group">
+            <div class="pic-item">
+                <div class="pic-front m1-1">0</div>
+                <div class="pic-back m1-2">0</div>
+            </div>
+            <div class="pic-item">
+                <div class="pic-front m2-1">0</div>
+                <div class="pic-back m2-2">0</div>
+            </div>
+        </div>
+        分
+        <div class="group">
+            <div class="pic-item">
+                <div class="pic-front s1-1">0</div>
+                <div class="pic-back s1-2">0</div>
+            </div>
+            <div class="pic-item">
+                <div class="pic-front s2-1">0</div>
+                <div class="pic-back s2-2">0</div>
+            </div>
+        </div>
+        秒
+    </div>
+    <script src="timer.js"></script>
+</body>
+
+</html>
