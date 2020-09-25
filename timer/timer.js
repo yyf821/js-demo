@@ -48,20 +48,15 @@ const cal = function (endtime) {
     let [h1, h2] = twoNum(t.hours)
     let [m1, m2] = twoNum(t.minutes)
     let [s1, s2] = twoNum(t.seconds)
-    if (s2 === 0) {
-        addClass('.s1-2')
-        if (s1 === 0) {
-            addClass('.m2-2')
-            if (m2 === 0) {
-                addClass('.m1-2')
-                if (m1 === 0) {
-                    addClass('.h2-2')
-                    if (h2 === 0) {
-                        addClass('.h1-2')
-                    }
-                }
-            }
+    let arr = [s2, s1, m2, m1, h2, h1]
+    let els = es('.pic-back')
+
+    for (let i = 0; i < arr.length - 1; i++) {
+        const element = arr[i];
+        if (element !== 0) {
+            break
         }
+        addClass(els[els.length - 2 - i])
     }
 }
 
@@ -85,10 +80,10 @@ const render = function (endtime) {
     }, 1000);
 }
 
-const addClass = function (cls) {
-    e(cls).classList.add("pic-ani");
+const addClass = function (el) {
+    el.classList.add("pic-ani");
     setTimeout(() => {
-        e(cls).classList.remove("pic-ani");
+        el.classList.remove("pic-ani");
     }, 1000)
 }
 
