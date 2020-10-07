@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            overflow: hidden;
+            height: 100%;
+        }
+
+        canvas {
+            background-color: pink;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="myCanvas" width="500" height="400">
+    </canvas>
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+        const friction = 0.97;
+        const ay = 0.1;
+        const balls = [];
+        const bounce = -0.8;
+        let selectedBall = null;
+
+        //获取坐标位置
+        function getMousePos(canvas, event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left * (canvas.width / rect.width);
+            const y = event.clientY - rect.top * (canvas.height / rect.height);
+            return { x, y }
+        }
+
+        function animate() {
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            balls.forEach(ball => {
+                // 更新小球的速度
+                ball.move(ctx)
+                ball.create(ctx)
+            });
+            requestAnimationFrame(animate);
+        }
+
+
+        const containsPoint = function (body, x, y) {
+
+            return (x > (body.x - body.radius) && x < (body.x + body.radius)
+
+                && y > (body.y - body.radius) && y < (body.y + body.radius));
+
+        }
+
+        const check = function (x, y) {
+            for (let i = 0; i < balls.length; i++) {
+                const ball = balls[i];
+                if (containsPoint(ball, x, y)) {
+                    return ball
+                }
+            }
+            return null
+        };
+
+        class Ball {
+            constructor(x, y) {
+                this.x = x
+                this.y = y
+                this.radius = 20;
+                this.color = '#333';
+                this.speedX = 5
+                this.speedY = 5
+                this.fired = false
+            }
+            fire() {
+                this.fired = true
+            }
+            move(ctx) {
+                if (this.fired) {
+                    if (this.x < this.radius || this.x + this.radius > canvas.width) {
+                        this.speedX = this.speedX * bounce
+                    }
+                    if (this.y < this.radius || this.y + this.radius > canvas.height) {
+                        this.speedY = this.speedY * bounce
+                    }
+                    // move
+                    this.x += this.speedX
+                    this.speedX *= friction;
+                    this.y += this.speedY
+                    this.speedY += ay;
+                }
+            }
+            create(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+        const __main = function () {
+            canvas.addEventListener("click", function (event) {
+                let { x, y } = getMousePos(canvas, event)
+                selectedBall = check(x, y)
+                if (selectedBall) {
+                    console.log(selectedBall);
+                } else {
+                    const ball = new Ball(x, y);
+                    balls.push(ball)
+                }
+            });
+            // canvas.onmousedown = function (e) {
+            //     var x = event.clientX - screenRect.left;
+            //     var y = event.clientY - screenRect.top;
+
+            //     console.log("MouseDown : (" + x + ", " + y + ")");
+
+            //     prevMouseX = x;
+            //     prevMouseY = y;
+
+            //     isMouseDown = true;
+
+            //     if (isRectClicked(x, y)) {
+            //         isRectSelected = true;
+            //     }
+            //     else {
+            //         isRectSelected = false;
+            //     }
+            // }
+
+            // canvas.onmousemove = function (e) {
+            //     if (isMouseDown && isRectSelected) {
+            //         var x = event.clientX - screenRect.left;
+            //         var y = event.clientY - screenRect.top;
+
+            //         var dx = x - prevMouseX;
+            //         var dy = y - prevMouseY;
+
+            //         rectX += dx;
+            //         rectY += dy;
+
+            //         prevMouseX = x;
+            //         prevMouseY = y;
+            //     }
+            // }
+
+            // canvas.onmouseup = function (e) {
+            //     var x = event.clientX - screenRect.left;
+            //     var y = event.clientY - screenRect.top;
+
+            //     console.log("MouseUp : (" + x + ", " + y + ")");
+
+            //     isMouseDown = false;
+            //     isRectSelected = false;
+            // }
+
+            // canvas.onmouseout = function (e) {
+            //     isMouseDown = false;
+            // }
+
+            animate()
+        }
+        __main()
+
+
+    </script>
+</body>
+
+</html>
