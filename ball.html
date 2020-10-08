@@ -31,10 +31,9 @@
         const canvas = document.getElementById('myCanvas');
         const ctx = canvas.getContext('2d');
         const friction = 0.97;
-        const ay = 0.1;
+        const ay = 0.3;
         const balls = [];
-        const bounce = -0.8;
-        let selectedBall = null;
+        const bounce = -0.7;
 
         //获取坐标位置
         function getMousePos(canvas, event) {
@@ -45,11 +44,8 @@
         }
 
         function animate() {
-
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
             balls.forEach(ball => {
-                // 更新小球的速度
                 ball.move(ctx)
                 ball.create(ctx)
             });
@@ -58,11 +54,8 @@
 
 
         const containsPoint = function (body, x, y) {
-
             return (x > (body.x - body.radius) && x < (body.x + body.radius)
-
                 && y > (body.y - body.radius) && y < (body.y + body.radius));
-
         }
 
         const check = function (x, y) {
@@ -81,8 +74,8 @@
                 this.y = y
                 this.radius = 20;
                 this.color = '#333';
-                this.speedX = 5
-                this.speedY = 5
+                this.speedX = 0
+                this.speedY = 0
                 this.fired = false
             }
             fire() {
@@ -90,17 +83,20 @@
             }
             move(ctx) {
                 if (this.fired) {
-                    if (this.x < this.radius || this.x + this.radius > canvas.width) {
-                        this.speedX = this.speedX * bounce
-                    }
-                    if (this.y < this.radius || this.y + this.radius > canvas.height) {
-                        this.speedY = this.speedY * bounce
-                    }
-                    // move
+                    // 移动
                     this.x += this.speedX
                     this.speedX *= friction;
                     this.y += this.speedY
                     this.speedY += ay;
+                    //反弹
+                    if (this.x < this.radius || this.x + this.radius > canvas.width) {
+                        this.speedX *= bounce
+                    }
+                    let bottom = canvas.height - this.radius
+                    if (this.y > bottom) {
+                        this.y = bottom
+                        this.speedY *= bounce
+                    }
                 }
             }
             create(ctx) {
@@ -111,66 +107,48 @@
                 ctx.closePath();
             }
         }
-        const __main = function () {
-            canvas.addEventListener("click", function (event) {
-                let { x, y } = getMousePos(canvas, event)
+
+        const drugAndDrop = function () {
+            let isMouseDown = false;
+            let selectedBall = null;
+            canvas.onmousedown = function (e) {
+                let { x, y } = getMousePos(canvas, e)
+                prevMouseX = x;
+                prevMouseY = y;
+                isMouseDown = true;
                 selectedBall = check(x, y)
-                if (selectedBall) {
-                    console.log(selectedBall);
-                } else {
+            }
+
+            canvas.onmousemove = function (e) {
+                if (isMouseDown && selectedBall) {
+                    let { x, y } = getMousePos(canvas, e)
+                    selectedBall.x = x
+                    selectedBall.y = y
+                }
+            }
+
+            canvas.onmouseup = function (e) {
+                let { x, y } = getMousePos(canvas, e)
+                //没有球就新建
+                if (!selectedBall) {
                     const ball = new Ball(x, y);
                     balls.push(ball)
+                } else {
+                    selectedBall.speedX = selectedBall.x - prevMouseX;
+                    selectedBall.speedY = selectedBall.y - prevMouseY;
+                    selectedBall.fire()
                 }
-            });
-            // canvas.onmousedown = function (e) {
-            //     var x = event.clientX - screenRect.left;
-            //     var y = event.clientY - screenRect.top;
+                isMouseDown = false;
+                selectedBall = null;
+            }
 
-            //     console.log("MouseDown : (" + x + ", " + y + ")");
+            canvas.onmouseout = function (e) {
+                isMouseDown = false;
+            }
+        }
 
-            //     prevMouseX = x;
-            //     prevMouseY = y;
-
-            //     isMouseDown = true;
-
-            //     if (isRectClicked(x, y)) {
-            //         isRectSelected = true;
-            //     }
-            //     else {
-            //         isRectSelected = false;
-            //     }
-            // }
-
-            // canvas.onmousemove = function (e) {
-            //     if (isMouseDown && isRectSelected) {
-            //         var x = event.clientX - screenRect.left;
-            //         var y = event.clientY - screenRect.top;
-
-            //         var dx = x - prevMouseX;
-            //         var dy = y - prevMouseY;
-
-            //         rectX += dx;
-            //         rectY += dy;
-
-            //         prevMouseX = x;
-            //         prevMouseY = y;
-            //     }
-            // }
-
-            // canvas.onmouseup = function (e) {
-            //     var x = event.clientX - screenRect.left;
-            //     var y = event.clientY - screenRect.top;
-
-            //     console.log("MouseUp : (" + x + ", " + y + ")");
-
-            //     isMouseDown = false;
-            //     isRectSelected = false;
-            // }
-
-            // canvas.onmouseout = function (e) {
-            //     isMouseDown = false;
-            // }
-
+        const __main = function () {
+            drugAndDrop()
             animate()
         }
         __main()
