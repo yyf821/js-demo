@@ -25,15 +25,17 @@
 
 <body>
 
-    <canvas id="myCanvas" width="500" height="400">
+    <canvas id="myCanvas">
     </canvas>
     <script>
         const canvas = document.getElementById('myCanvas');
         const ctx = canvas.getContext('2d');
+        canvas.width = document.body.offsetWidth
+        canvas.height = document.body.offsetHeight
         const friction = 0.97;
-        const ay = 0.3;
+        const ay = 0.2;
         const balls = [];
-        const bounce = -0.7;
+        const restitution = 0.8;
 
         //获取坐标位置
         function getMousePos(canvas, event) {
@@ -43,21 +45,12 @@
             return { x, y }
         }
 
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            balls.forEach(ball => {
-                ball.move(ctx)
-                ball.create(ctx)
-            });
-            requestAnimationFrame(animate);
-        }
-
-
         const containsPoint = function (body, x, y) {
             return (x > (body.x - body.radius) && x < (body.x + body.radius)
                 && y > (body.y - body.radius) && y < (body.y + body.radius));
         }
 
+        //检查是否选中小球
         const check = function (x, y) {
             for (let i = 0; i < balls.length; i++) {
                 const ball = balls[i];
@@ -77,11 +70,12 @@
                 this.speedX = 0
                 this.speedY = 0
                 this.fired = false
+                this.hitCount = 0
             }
             fire() {
                 this.fired = true
             }
-            move(ctx) {
+            move() {
                 if (this.fired) {
                     // 移动
                     this.x += this.speedX
@@ -89,13 +83,25 @@
                     this.y += this.speedY
                     this.speedY += ay;
                     //反弹
-                    if (this.x < this.radius || this.x + this.radius > canvas.width) {
-                        this.speedX *= bounce
+                    if (this.x < this.radius) {
+                        this.x = this.radius
+                        this.speedX = Math.abs(this.speedX) * restitution
+                    } else if (this.x + this.radius > canvas.width) {
+                        this.x = canvas.width - this.radius
+                        this.speedX = -Math.abs(this.speedX) * restitution
                     }
                     let bottom = canvas.height - this.radius
                     if (this.y > bottom) {
+                        if (this.y - bottom < 2) {
+                            this.hitCount++
+                        }
                         this.y = bottom
-                        this.speedY *= bounce
+                        this.speedY = -Math.abs(this.speedY) * restitution;
+                    }
+                    //修正无限反弹
+                    if (this.hitCount === 20) {
+                        this.fired = false
+                        this.hitCount = 0
                     }
                 }
             }
@@ -145,6 +151,15 @@
             canvas.onmouseout = function (e) {
                 isMouseDown = false;
             }
+        }
+
+        const animate = function () {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            balls.forEach(ball => {
+                ball.move()
+                ball.create(ctx)
+            });
+            requestAnimationFrame(animate);
         }
 
         const __main = function () {
