@@ -245,25 +245,21 @@ const filter = function (list, nums) {
 
 //检测括号是否可以删除
 const check = function (s, left, right) {
-    let i;            //下标
-    let leftCount;    //左括号统计
-
     //处理 ' -(a +|- b) '
     if (s[left - 1] === '-') {
-        i = left;
-        leftCount = 1;
-        while (++i < right) {
+        for (let i = left + 1; i < right; i++) {
             if (s[i] === '(') {
-                leftCount++;
+                i = s.indexOf(')', i)
+                continue
             }
-            else if ((s[i] === '+' || s[i] === '-') && leftCount === 1) {
+            if (s[i] === '+' || s[i] === '-') {
                 return false;
             }
         }
     }
 
     //处理 ' /(a +|-|*|/ b) '
-    if (s[left - 1] == '/') {
+    if (s[left - 1] === '/') {
         return false;
     }
 
@@ -274,16 +270,18 @@ const check = function (s, left, right) {
     }
 
     //处理 ' *(a *|/ b) +|-|*|/ '
-    i = left;
-    leftCount = 1;
-    while (++i < right) {
-        if (s[i] == '(') {
-            leftCount++;
-        }
-        else if ((s[i] == '*' || s[i] == '/') && leftCount == 1) {
-            return true;
+    if (s[left - 1] === '*') {
+        for (let i = left + 1; i < right; i++) {
+            if (s[i] === '(') {
+                i = s.indexOf(')', i)
+                continue
+            }
+            if (s[i] === '*' || s[i] === '/') {
+                return true;
+            }
         }
     }
+
     return false;
 }
 
