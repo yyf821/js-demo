@@ -70,38 +70,34 @@
                 this.speedX = 0
                 this.speedY = 0
                 this.fired = false
-                this.hitCount = 0
             }
             fire() {
                 this.fired = true
             }
             move() {
                 if (this.fired) {
+                    console.log(this.speedY);
                     // 移动
-                    this.x += this.speedX
-                    this.speedX *= friction;
-                    this.y += this.speedY
                     this.speedY += ay;
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    this.speedX *= friction;
+                    this.speedY *= friction;
                     //反弹
                     if (this.x < this.radius) {
                         this.x = this.radius
-                        this.speedX = Math.abs(this.speedX) * restitution
+                        this.speedX *= -restitution
                     } else if (this.x + this.radius > canvas.width) {
                         this.x = canvas.width - this.radius
-                        this.speedX = -Math.abs(this.speedX) * restitution
+                        this.speedX *= -restitution
                     }
                     let bottom = canvas.height - this.radius
-                    if (this.y > bottom) {
-                        if (this.y - bottom < 2) {
-                            this.hitCount++
-                        }
+                    if (this.y - this.radius < 0) {
+                        this.y = this.radius
+                        this.speedY *= -restitution;
+                    } else if (this.y > bottom) {
                         this.y = bottom
-                        this.speedY = -Math.abs(this.speedY) * restitution;
-                    }
-                    //修正无限反弹
-                    if (this.hitCount === 20) {
-                        this.fired = false
-                        this.hitCount = 0
+                        this.speedY *= -restitution;
                     }
                 }
             }
@@ -117,7 +113,9 @@
         const drugAndDrop = function () {
             let isMouseDown = false;
             let selectedBall = null;
+            let start = 0;
             canvas.onmousedown = function (e) {
+                start = Date.now();
                 let { x, y } = getMousePos(canvas, e)
                 prevMouseX = x;
                 prevMouseY = y;
@@ -134,14 +132,16 @@
             }
 
             canvas.onmouseup = function (e) {
+                const millis = Date.now() - start;
+
                 let { x, y } = getMousePos(canvas, e)
                 //没有球就新建
                 if (!selectedBall) {
                     const ball = new Ball(x, y);
                     balls.push(ball)
                 } else {
-                    selectedBall.speedX = selectedBall.x - prevMouseX;
-                    selectedBall.speedY = selectedBall.y - prevMouseY;
+                    selectedBall.speedX = (selectedBall.x - prevMouseX) * 1000 / 60 / millis;
+                    selectedBall.speedY = (selectedBall.y - prevMouseY) * 1000 / 60 / millis;
                     selectedBall.fire()
                 }
                 isMouseDown = false;
